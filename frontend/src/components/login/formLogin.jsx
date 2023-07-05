@@ -2,26 +2,43 @@ import React from 'react';
 import { useFormik } from 'formik';
 import Router, { useRouter } from 'next/router';
 import * as Yup from 'yup';
+import { useSession, signIn } from 'next-auth/react';
 
 const handleSubmit = async (values) => {
 
   try {
 
-    var requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: values.username, pass: values.pass })
-    };
+    const login = await signIn('credentials',{
+      redirect: false,
+      username: values.username,
+      pass: values.pass
+    })
 
-    const login = await fetch('http://localhost:3003/auth/login', requestOptions);
-    const result = await login.json();
-
-    if (!result.success) {
-      alert(result.message);
+    if(login.ok == false ){
+        alert('Username atau Password salah')
     } else {
-      return Router.push('/')
+        return Router.push('/')
     }
 
+
+    // var requestOptions = {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ username: values.username, pass: values.pass })
+    // };
+
+    // const login = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/auth/login`, requestOptions);
+    // const result = await login.json();
+
+    // if(login.status === '401'){
+    //   alert('Username atau Password salah')
+    // }
+
+    // if (!result.success) {
+    //   alert(result.message);
+    // } else {
+    //   return Router.push('/')
+    // }
 
   } catch (error) {
     console.log(error)

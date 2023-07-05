@@ -1,4 +1,5 @@
 import React from 'react'
+import { useSession, signOut } from 'next-auth/react'
 
 const Header = () => {
 
@@ -12,7 +13,7 @@ const Header = () => {
                 <input className="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" />
                 <div className="navbar-nav">
                     <div className="nav-item text-nowrap">
-                        <a className="nav-link px-3" type='button'>Sign out</a>
+                        <a className="nav-link px-3" type='button' onClick={() => signOut({ callbackUrl: '/login' })}>Sign out</a>
                     </div>
                 </div>
             </header>
