@@ -2,43 +2,35 @@ import React from 'react';
 import { useFormik } from 'formik';
 import Router, { useRouter } from 'next/router';
 import * as Yup from 'yup';
-import { useSession, signIn } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
+import { toast } from 'react-toastify';
 
 const handleSubmit = async (values) => {
 
   try {
 
-    const login = await signIn('credentials',{
+    const login = await signIn('credentials', {
       redirect: false,
       username: values.username,
       pass: values.pass
     })
 
-    if(login.ok == false ){
-        alert('Username atau Password salah')
+    if (!login.ok) {
+
+      toast.error('Username atau Password salah', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+
     } else {
-        return Router.push('/')
+      return Router.push('/')
     }
-
-
-    // var requestOptions = {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ username: values.username, pass: values.pass })
-    // };
-
-    // const login = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/auth/login`, requestOptions);
-    // const result = await login.json();
-
-    // if(login.status === '401'){
-    //   alert('Username atau Password salah')
-    // }
-
-    // if (!result.success) {
-    //   alert(result.message);
-    // } else {
-    //   return Router.push('/')
-    // }
 
   } catch (error) {
     console.log(error)
@@ -56,8 +48,8 @@ const FormLogin = () => {
     },
 
     validationSchema: Yup.object({
-      username : Yup.string().required(),
-      pass : Yup.string().required(),
+      username: Yup.string().required(),
+      pass: Yup.string().required(),
     }),
 
     onSubmit: async (values) => {

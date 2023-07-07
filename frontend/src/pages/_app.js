@@ -2,6 +2,8 @@ import "../../styles/main.css"
 import 'bootstrap/dist/css/bootstrap.css';
 import Head from "next/head";
 import { SessionProvider } from "next-auth/react"
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function MyApp({ Component, pageProps : { session, ...pageProps }}) {
     return (
@@ -11,6 +13,7 @@ export default function MyApp({ Component, pageProps : { session, ...pageProps }
             </Head>
             <SessionProvider session={session}>
                 <Component {...pageProps} />
+                <ToastContainer/>
             </SessionProvider>
         </>
     )
