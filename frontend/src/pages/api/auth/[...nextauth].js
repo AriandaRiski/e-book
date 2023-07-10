@@ -40,7 +40,8 @@ export default nextAuth({
                     ...token,
                     name: user?.data.username,
                     email: `${user.data.username}@gmail.com`,
-                    row: user?.data
+                    row: user?.data,
+                    tokenAccess: user.token
                 }
             }
 
@@ -53,9 +54,10 @@ export default nextAuth({
         //   return baseUrl
         // },
         async session({ session, user, token }) {
+
             session.name = token.name;
             session.email = token.email;
-            session.tokenAccess = token.row.token;
+            session.tokenAccess = token.tokenAccess;
             session.row = token.session;
             
             return session
