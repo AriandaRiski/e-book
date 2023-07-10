@@ -29,7 +29,7 @@ const handleSubmit = async (values) => {
       });
 
     } else {
-      return Router.push('/')
+      return Router.push('/admin/dashboard')
     }
 
   } catch (error) {
