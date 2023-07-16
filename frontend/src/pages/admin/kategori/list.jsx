@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Layout from '@/components/layout/layout'
 import { useSession } from 'next-auth/react'
 import DataTable from 'react-data-table-component';
+import AddKategori from '@/pages/admin/addKategori';
 
 const list = () => {
     const { data: session } = useSession();
@@ -23,7 +24,7 @@ const list = () => {
                     };
 
                     const getData = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/kategori/list`, requestOptions);
-                    const response = await getData.json()
+                    const response = await getData.json();
 
                     const timeout = setTimeout(() => {
                         setKategori(response.data)
@@ -95,26 +96,7 @@ const list = () => {
                     />
                 </div>
 
-                {/* Modal Tambah */}
-                <div>
-                    <div className="modal fade" id="tambahModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="exampleModalLabel">Tambah Kategori</h5>
-                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-                                </div>
-                                <div className="modal-body">
-                                    ...
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" className="btn btn-primary">Simpan</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <AddKategori/>
 
                 {/* Modal Edit */}
                 <div>

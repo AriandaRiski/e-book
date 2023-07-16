@@ -5,7 +5,6 @@ import { useSession } from 'next-auth/react'
 const index = () => {
 
   const {data : session} = useSession();
-  console.log(session)
 
   return (
     <>
