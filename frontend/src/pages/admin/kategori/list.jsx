@@ -5,40 +5,19 @@ import DataTable from 'react-data-table-component';
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteKategori, getKategori } from '@/redux/action/kategori';
 
 const list = () => {
     const { data: session } = useSession();
-    const [kategori, setKategori] = useState([]);
-    const [pending, setPending] = useState(true);
 
-    const fetchData = async (session) => {
-        try {
-
-            const requestOptions = {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${session}`,
-                    'Content-Type': 'application/json'
-                },
-            };
-
-            const getData = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/kategori/list`, requestOptions);
-            const response = await getData.json()
-
-            const timeout = setTimeout(() => {
-                setKategori(response.data)
-                setPending(false);
-            }, 700);
-            return () => clearTimeout(timeout);
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
+    const dispatch = useDispatch();
+    const { kategori } = useSelector((state) => state);
 
     useEffect(() => {
         if (session) {
-            fetchData(session.tokenAccess)
+            dispatch(getKategori(session.tokenAccess));
+            // fetchData(session.tokenAccess);
         }
     }, [session]);
 
@@ -113,7 +92,6 @@ const list = () => {
             if (!response.status) {
                 alert(response.message);
             } else {
-                // setKategori(values)
 
                 toast.success(response.message, {
                     position: "top-center",
@@ -125,7 +103,9 @@ const list = () => {
                     progress: undefined,
                     theme: "colored",
                 });
-                fetchData(session.tokenAccess)
+                // fetchData(session.tokenAccess)
+                dispatch(getKategori(session.tokenAccess));
+
             }
 
         } catch (error) {
@@ -135,43 +115,27 @@ const list = () => {
 
     // DELETE
     const handleHapus = async (id) => {
-        try {
 
-            const requestOptions = {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${session.tokenAccess}`,
-                    'Content-Type': 'application/json'
-                },
-            };
+        const konfir = confirm("yakin ingin menghapus kategori?");
+        if (konfir == true) {
 
-            const request = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/kategori/hapus/${id}`, requestOptions);
-            const response = await request.json();
+            dispatch(deleteKategori({ token: session.tokenAccess, id: id }));
+            dispatch(getKategori(session.tokenAccess));
 
-            if (!response.success) {
-
-                alert(response.message)
-
-            } else {
-
-                const konfir = confirm("yakin ingin menghapus kategori?");
-                if (konfir == true) {
-                    toast.success(response.message, {
-                        position: "top-center",
-                        autoClose: 1000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
-                    fetchData(session.tokenAccess)
-                }
-            }
-
-        } catch (error) {
-            console.log(error)
+            // if (kategori.isDelete == false) {
+            //     alert('Kategori gagal dihapus!');
+            // } else {
+            //     toast.success(response.message, {
+            //         position: "top-center",
+            //         autoClose: 1000,
+            //         hideProgressBar: false,
+            //         closeOnClick: true,
+            //         pauseOnHover: true,
+            //         draggable: true,
+            //         progress: undefined,
+            //         theme: "colored",
+            //     });
+            // }
         }
     }
 
@@ -185,11 +149,11 @@ const list = () => {
                 <div className="table-responsive">
                     <DataTable
                         columns={columns}
-                        data={kategori}
+                        data={kategori.data}
                         actions={action}
                         paginationComponentOptions={paginationComponentOptions}
                         paginationPerPage={10}
-                        progressPending={pending}
+                        progressPending={kategori.isLoading}
                         pagination
                     />
                 </div>

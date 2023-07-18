@@ -7,6 +7,11 @@ const Routers = require('./Routers/Routers');
 const cors = require('cors');
 
 app.use(cors('*'));
+
+// app.use(cors({
+//     origin: 'http://localhost:4000'
+// }));
+
 app.use(bodyParser.json());
 app.use(Routers);
 

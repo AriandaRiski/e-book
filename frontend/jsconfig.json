@@ -3,6 +3,7 @@
     "paths": {
       "@/layout/*" : ["./src/components/layout/*"],
       "@/pages/*" : ["./src/pages/*"],
+      "@/redux/*" : ["./src/redux/*"],
       "@/*": ["./src/*"]
     }
   }
