@@ -16,7 +16,7 @@ const tambah = (kategori) => {
 }
 
 const cekId = (id_kategori) => {
-    const cek = db.select('id_kategori').from('kategori').where('id_kategori', id_kategori).first();
+    const cek = db.select('*').from('kategori').where('id_kategori', id_kategori).first();
     return cek;
 }
 

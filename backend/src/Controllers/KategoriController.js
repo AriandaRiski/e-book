@@ -1,6 +1,6 @@
 const KategoriModel = require('./../Models/KategoriModel')
 
-const ListKategori = async(req, res) => {
+const ListKategori = async (req, res) => {
 
     try {
 
@@ -18,7 +18,7 @@ const ListKategori = async(req, res) => {
     }
 }
 
-const TambahKategori = async(req, res) => {
+const TambahKategori = async (req, res) => {
 
     const kategori = req.body.kategori;
 
@@ -26,16 +26,18 @@ const TambahKategori = async(req, res) => {
         const cek = await KategoriModel.cekKategori(kategori);
         if (cek) {
             return res.json({
-                status: false,
+                success: false,
                 message: `Data Kategori " ${kategori} " Sudah Tersedia`
             });
         }
 
         const insert = await KategoriModel.tambah(kategori);
+        const getId = await KategoriModel.cekId(insert[0]);
 
         res.status(201).json({
-            status: true,
-            message: `Berhasil Insert Kategori, ${kategori}`
+            success: true,
+            message: `Berhasil Insert Kategori, ${kategori}`,
+            data: getId
         });
 
     } catch (error) {
@@ -44,7 +46,7 @@ const TambahKategori = async(req, res) => {
     }
 }
 
-const UpdateKategori = async(req, res) => {
+const UpdateKategori = async (req, res) => {
 
     const id_kategori = req.params.id_kategori;
     const kategori = req.body.kategori;
@@ -70,7 +72,7 @@ const UpdateKategori = async(req, res) => {
     }
 }
 
-const HapusKategori = async(req, res) => {
+const HapusKategori = async (req, res) => {
 
     const id_kategori = req.params.id_kategori;
 
@@ -90,7 +92,7 @@ const HapusKategori = async(req, res) => {
 
     } catch (error) {
         console.log(error)
-        res.status(500).json({ message : error })
+        res.status(500).json({ message: error })
     }
 }
 
