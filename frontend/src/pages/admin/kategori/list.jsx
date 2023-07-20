@@ -6,7 +6,8 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteKategori, getKategori } from '@/redux/action/kategori';
+import { addKategori, deleteKategori, getKategori } from '@/redux/action/kategori';
+// import Swal from 'sweetalert2';
 
 const list = () => {
     const { data: session } = useSession();
@@ -14,10 +15,21 @@ const list = () => {
     const dispatch = useDispatch();
     const { kategori } = useSelector((state) => state);
 
+    // sweetAlert
+    // const feedBackNotif = (icon, title, message) => {
+    //     Swal.fire({
+    //         title: title,
+    //         text: message,
+    //         icon: icon,
+    //         timer: 2000,
+    //         showConfirmButton: false,
+    //         allowOutsideClick: true
+    //     })
+    // }
+
     useEffect(() => {
         if (session) {
             dispatch(getKategori(session.tokenAccess));
-            // fetchData(session.tokenAccess);
         }
     }, [session]);
 
@@ -77,25 +89,15 @@ const list = () => {
 
         try {
 
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${session.tokenAccess}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(values),
-            };
+            const tambah = await dispatch(addKategori({ token: session.tokenAccess, values: values }));
+            const response = tambah.payload;
 
-            const request = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/kategori/tambah`, requestOptions);
-            const response = await request.json();
-
-            if (!response.status) {
-                alert(response.message);
+            if (!response.success) {
+                alert(response.message)
             } else {
-
                 toast.success(response.message, {
                     position: "top-center",
-                    autoClose: 3000,
+                    autoClose: 1000,
                     hideProgressBar: false,
                     closeOnClick: true,
                     pauseOnHover: true,
@@ -103,9 +105,6 @@ const list = () => {
                     progress: undefined,
                     theme: "colored",
                 });
-                // fetchData(session.tokenAccess)
-                dispatch(getKategori(session.tokenAccess));
-
             }
 
         } catch (error) {
@@ -115,27 +114,53 @@ const list = () => {
 
     // DELETE
     const handleHapus = async (id) => {
+        try {
 
-        const konfir = confirm("yakin ingin menghapus kategori?");
-        if (konfir == true) {
+            const konfirmasi = confirm("yakin ingin menghapus kategori?");
+            if (konfirmasi == true) {
 
-            dispatch(deleteKategori({ token: session.tokenAccess, id: id }));
-            dispatch(getKategori(session.tokenAccess));
+                const hapus = await dispatch(deleteKategori({ token: session.tokenAccess, id: id }));
+                const response = hapus.payload;
 
-            // if (kategori.isDelete == false) {
-            //     alert('Kategori gagal dihapus!');
-            // } else {
-            //     toast.success(response.message, {
-            //         position: "top-center",
-            //         autoClose: 1000,
-            //         hideProgressBar: false,
-            //         closeOnClick: true,
-            //         pauseOnHover: true,
-            //         draggable: true,
-            //         progress: undefined,
-            //         theme: "colored",
-            //     });
-            // }
+                if (!response.success) {
+                    alert('Kategori Gagal dihapus')
+                } else {
+                    toast.success(response.message, {
+                        position: "top-center",
+                        autoClose: 1000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                }
+
+            }
+
+            // Swal.fire({
+            //     title: 'Are you sure?',
+            //     text: "You won't be able to revert this!",
+            //     icon: 'warning',
+            //     showCancelButton: true,
+            //     confirmButtonColor: '#3085d6',
+            //     cancelButtonColor: '#d33',
+            //     confirmButtonText: 'Yes, delete it!'
+            // }).then(async (result) => {
+            //     if (result.isConfirmed) {
+            //         const hapus = await dispatch(deleteKategori({ token: session.tokenAccess, id: id }));
+            //         const response = hapus.payload;
+            //         if (response.success == false) {
+            //             return feedBackNotif('error', 'Error!', response.message)
+            //         } else if (kategori.isDelete == true) {
+            //             return feedBackNotif('success', 'Berhasil!', 'oke')
+            //         }
+            //     }
+            // })
+
+        } catch (error) {
+            console.log(error)
         }
     }
 
