@@ -9,6 +9,7 @@ import isPropValid from '@emotion/is-prop-valid';
 import { useEffect } from "react";
 import { Provider } from "react-redux";
 import store from "@/redux/store"
+import ModalDialog from "@/components/modalDialog";
 
 export default function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 
@@ -26,6 +27,7 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
                     <SessionProvider session={session}>
                         <Component {...pageProps} />
                         <ToastContainer />
+                        <ModalDialog/>
                     </SessionProvider>
                 </Provider>
             </StyleSheetManager>
