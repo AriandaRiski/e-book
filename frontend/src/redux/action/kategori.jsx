@@ -104,7 +104,7 @@ const kategoriSlice = createSlice({
             })
             .addCase(addKategori.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.data = [...state.data, action.payload.data ?? state.data ];
+                state.data = [...state.data, action.payload.data ];
             })
             .addCase(addKategori.rejected, (state, action) => {
                 state.isLoading = false
