@@ -2,30 +2,18 @@ import React, { useState, useEffect } from 'react'
 import Layout from '@/components/layout/layout'
 import { useSession } from 'next-auth/react'
 import DataTable from 'react-data-table-component';
-import { useFormik } from 'formik'
-import * as Yup from 'yup'
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
-import { addKategori, deleteKategori, getKategori } from '@/redux/action/kategori';
-// import Swal from 'sweetalert2';
+import { deleteKategori, getKategori } from '@/redux/action/kategori';
+import { Button, Stack } from 'react-bootstrap';
+import { openModal } from '@/redux/action/modalDialog';
+import FormKategori from '@/components/page/kategori/addKategori';
 
 const list = () => {
     const { data: session } = useSession();
 
     const dispatch = useDispatch();
     const { kategori } = useSelector((state) => state);
-
-    // sweetAlert
-    // const feedBackNotif = (icon, title, message) => {
-    //     Swal.fire({
-    //         title: title,
-    //         text: message,
-    //         icon: icon,
-    //         timer: 2000,
-    //         showConfirmButton: false,
-    //         allowOutsideClick: true
-    //     })
-    // }
 
     useEffect(() => {
         if (session) {
@@ -49,12 +37,14 @@ const list = () => {
             cell: (row) => {
                 return (
                     <>
-                        <button type='button' className='m-2 btn btn-warning btn-sm' data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>
-                        <button className='m-2 btn btn-danger btn-sm' onClick={() => handleHapus(row.id_kategori)}>Hapus</button>
+                        <Stack direction='horizontal' gap={2}>
+                            <Button variant='outline-warning' onClick={() => dispatch(openModal({ title: 'Edit Kategori', content: <FormKategori action={'edit'} data={row} /> }))} >Edit</Button>
+                            <Button variant='outline-danger' onClick={() => handleHapus(row.id_kategori)} >Hapus</Button>
+                        </Stack>
                     </>
                 )
             },
-            width: '140px',
+            width: '200px',
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
@@ -68,49 +58,7 @@ const list = () => {
         selectAllRowsItemText: 'Semua ',
     };
 
-    const action = (<button className='btn btn-primary btn-sm' data-bs-toggle="modal" data-bs-target="#tambahModal">Tambah</button>);
-
-    const formik = useFormik({
-        initialValues: {
-            kategori: ''
-        },
-
-        validationSchema: Yup.object({
-            kategori: Yup.string().required()
-        }),
-
-        onSubmit: async (values, { resetForm }) => {
-            handleSubmit(values, session);
-            resetForm();
-        }
-    })
-
-    const handleSubmit = async (values, session) => {
-
-        try {
-
-            const tambah = await dispatch(addKategori({ token: session.tokenAccess, values: values }));
-            const response = tambah.payload;
-
-            if (!response.success) {
-                alert(response.message)
-            } else {
-                toast.success(response.message, {
-                    position: "top-center",
-                    autoClose: 1000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                });
-            }
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
+    const action = (<Button variant="outline-primary" size='lg' onClick={() => { dispatch(openModal({ title: 'Tambah Kategori', content: <FormKategori /> })) }}>Tambah</Button>);
 
     // DELETE
     const handleHapus = async (id) => {
@@ -139,26 +87,6 @@ const list = () => {
 
             }
 
-            // Swal.fire({
-            //     title: 'Are you sure?',
-            //     text: "You won't be able to revert this!",
-            //     icon: 'warning',
-            //     showCancelButton: true,
-            //     confirmButtonColor: '#3085d6',
-            //     cancelButtonColor: '#d33',
-            //     confirmButtonText: 'Yes, delete it!'
-            // }).then(async (result) => {
-            //     if (result.isConfirmed) {
-            //         const hapus = await dispatch(deleteKategori({ token: session.tokenAccess, id: id }));
-            //         const response = hapus.payload;
-            //         if (response.success == false) {
-            //             return feedBackNotif('error', 'Error!', response.message)
-            //         } else if (kategori.isDelete == true) {
-            //             return feedBackNotif('success', 'Berhasil!', 'oke')
-            //         }
-            //     }
-            // })
-
         } catch (error) {
             console.log(error)
         }
@@ -182,55 +110,6 @@ const list = () => {
                         pagination
                     />
                 </div>
-
-                {/* Modal Tambah */}
-                <div className="modal fade" id="tambahModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">Tambah Kategori</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-                            </div>
-                            <form onSubmit={formik.handleSubmit}>
-                                <div className="modal-body">
-                                    <div className="form-floating">
-                                        <input type="text" className="form-control" name="kategori" placeholder="masukkan nama kategori"
-                                            {...formik.getFieldProps('kategori')}
-                                        />
-                                        <label htmlFor="floatingInput">Kategori</label>
-                                        {formik.errors.kategori && <div className='error'>{formik.errors.kategori}</div>}
-                                    </div>
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Simpan</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Modal Edit */}
-                <div>
-                    <div className="modal fade" id="editModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="exampleModalLabel">Edit Kategori</h5>
-                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-                                </div>
-                                <div className="modal-body">
-                                    ...
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" className="btn btn-primary">Simpan</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </Layout >
         </>
     )

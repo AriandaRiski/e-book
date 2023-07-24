@@ -61,6 +61,28 @@ export const addKategori = createAsyncThunk('kategori/addKategori', async ({ tok
     }
 })
 
+export const editKategori = createAsyncThunk('kategori/editKategori', async ({ token, values }) => {
+    try {
+
+        const requestOptions = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(values),
+        };
+
+        const request = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/kategori/edit/${values.id_kategori}`, requestOptions);
+        const response = await request.json();
+
+        return response
+
+    } catch (error) {
+        console.log(error)
+    }
+})
+
 const kategoriSlice = createSlice({
     name: 'kategori',
     initialState: {
@@ -104,9 +126,23 @@ const kategoriSlice = createSlice({
             })
             .addCase(addKategori.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.data = [...state.data, action.payload.data ];
+                state.data = action.payload.data ? [...state.data, action.payload.data] : state.data;
             })
             .addCase(addKategori.rejected, (state, action) => {
+                state.isLoading = false
+                state.isError = action.error;
+            })
+
+            // edit
+            .addCase(editKategori.pending, (state, action) => {
+                state.isLoading = true
+            })
+            .addCase(editKategori.fulfilled, (state, action) => {
+                state.isLoading = false;
+                // state.data = action.payload.data ? [...state.data, action.payload.data] : state.data;
+                state.data = action.payload.data ? state.data.map(obj => obj.id_kategori == action.payload.data.id_kategori ? { ...obj, ...action.payload.data } : obj) : state.data
+            })
+            .addCase(editKategori.rejected, (state, action) => {
                 state.isLoading = false
                 state.isError = action.error;
             })

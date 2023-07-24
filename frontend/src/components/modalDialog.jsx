@@ -22,12 +22,6 @@ function modalDialog() {
         <Modal.Body>
           {modal.content}
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => dispatch(closeModal())}>
-            Close
-          </Button>
-          <Button variant="primary">Understood</Button>
-        </Modal.Footer>
       </Modal>
     </>
   );
