@@ -10,5 +10,6 @@ Router.get('/list', KategoriController.ListKategori)
 Router.post('/tambah', KategoriValidation.addValidation, KategoriController.TambahKategori)
 Router.put('/edit/:id_kategori', KategoriValidation.editValidation, KategoriController.UpdateKategori)
 Router.delete('/hapus/:id_kategori', KategoriValidation.deleteValidation, KategoriController.HapusKategori)
+Router.get('/total', KategoriController.TotalKategori )
 
 module.exports = Router;
