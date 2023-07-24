@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, current } from '@reduxjs/toolkit'
 
-export const getKategori = createAsyncThunk('kategori/getKategori', async (token) => {
+export const getKategori = createAsyncThunk('kategori/getKategori', async ({ token, page, limit }) => {
+
     try {
         const requestOptions = {
             method: 'GET',
@@ -9,7 +10,7 @@ export const getKategori = createAsyncThunk('kategori/getKategori', async (token
                 'Authorization': `Bearer ${token}`
             }
         };
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/kategori/list`, requestOptions);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/kategori/list?page=${page}&limit=${limit}`, requestOptions);
         const data = await response.json();
 
         return data
@@ -90,6 +91,7 @@ const kategoriSlice = createSlice({
         isError: null,
         data: [],
         isDelete: false,
+        total: 0
     },
 
     extraReducers: (builder) => {
@@ -100,6 +102,7 @@ const kategoriSlice = createSlice({
             .addCase(getKategori.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.data = action.payload.data;
+                state.total = action.payload.total;
             })
             .addCase(getKategori.rejected, (state, action) => {
                 state.isLoading = false
@@ -139,7 +142,6 @@ const kategoriSlice = createSlice({
             })
             .addCase(editKategori.fulfilled, (state, action) => {
                 state.isLoading = false;
-                // state.data = action.payload.data ? [...state.data, action.payload.data] : state.data;
                 state.data = action.payload.data ? state.data.map(obj => obj.id_kategori == action.payload.data.id_kategori ? { ...obj, ...action.payload.data } : obj) : state.data
             })
             .addCase(editKategori.rejected, (state, action) => {

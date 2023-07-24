@@ -4,12 +4,18 @@ const ListKategori = async (req, res) => {
 
     try {
 
-        const kategori = await KategoriModel.getKategori();
+        let filter = {}
+        filter = { ...filter, page: req.query.page ?? 1 };
+        filter = { ...filter, limit: req.query.limit ?? 10 };
+
+        const kategori = await KategoriModel.getKategori(filter);
+        const total = await KategoriModel.total().first();
 
         return res.status(201).json({
             success: true,
             data: kategori,
-            keterangan: "List kategori"
+            keterangan: "List kategori",
+            total : total.total
         })
 
     } catch (error) {
@@ -102,9 +108,15 @@ const HapusKategori = async (req, res) => {
     }
 }
 
+const TotalKategori = async (req, res) => {
+    const total = await KategoriModel.total().first();
+    return res.status(201).json(total)
+}
+
 module.exports = {
     ListKategori,
     TambahKategori,
     UpdateKategori,
-    HapusKategori
+    HapusKategori,
+    TotalKategori
 }
