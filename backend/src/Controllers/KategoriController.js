@@ -32,12 +32,12 @@ const TambahKategori = async (req, res) => {
         }
 
         const insert = await KategoriModel.tambah(kategori);
-        const getId = await KategoriModel.cekId(insert[0]);
+        const getData = await KategoriModel.cekId(insert[0]);
 
         res.status(201).json({
             success: true,
             message: `Berhasil Insert Kategori, ${kategori}`,
-            data: getId
+            data: getData
         });
 
     } catch (error) {
@@ -54,16 +54,22 @@ const UpdateKategori = async (req, res) => {
     try {
 
         const cek = await KategoriModel.cekId(id_kategori);
-
         if (!cek) {
             return res.json({ message: `data dengan id = ${id_kategori} tidak ditemukan!` })
         }
 
+        const cek_kat = await KategoriModel.cekKategori(kategori);
+        if (cek_kat) {
+            return res.json({ success: false, message: `Data Kategori " ${kategori} " Sudah Tersedia` });
+        }
+
         const update = await KategoriModel.update(id_kategori, kategori)
+        const getData = await KategoriModel.cekId(id_kategori)
 
         return res.status(201).json({
             success: true,
-            message: "Kategori Berhasil di Update!"
+            message: "Kategori Berhasil di Update!",
+            data: getData
         })
 
     } catch (error) {
