@@ -20,8 +20,8 @@ const total = () => {
     return total;
 }
 
-const cekKategori = (kategori) => {
-    const cek = db.select('*').from('kategori').where({ kategori: kategori }).first();
+const cekKategori = (kategori, id_kategori) => {
+    const cek = db.select('*').from('kategori').where({ kategori: kategori }).where('id_kategori', '!=', id_kategori).first();
     return cek;
 }
 
@@ -40,8 +40,8 @@ const update = (id_kategori, kategori) => {
     return update;
 }
 
-const hapus = (id_kategori) => {
-    const hapus = db('kategori').where({ id_kategori: id_kategori }).del();
+const hapus = (id) => {
+    const hapus = db('tbl_buku').where({ id: id }).del();
     return hapus;
 }
 
