@@ -64,7 +64,7 @@ const UpdateKategori = async (req, res) => {
             return res.json({ message: `data dengan id = ${id_kategori} tidak ditemukan!` })
         }
 
-        const cek_kat = await KategoriModel.cekKategori(kategori);
+        const cek_kat = await KategoriModel.cekKategori(kategori,id_kategori);
         if (cek_kat) {
             return res.json({ success: false, message: `Data Kategori " ${kategori} " Sudah Tersedia` });
         }
