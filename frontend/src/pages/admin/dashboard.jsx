@@ -1,7 +1,7 @@
 import React from 'react'
 import Layout from '@/components/layout/layout'
 import { useSession } from 'next-auth/react'
-import { Card } from 'react-bootstrap';
+import { Button, Card } from 'react-bootstrap';
 
 const index = () => {
 

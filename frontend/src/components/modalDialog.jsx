@@ -15,6 +15,7 @@ function modalDialog() {
         onHide={() => { dispatch(closeModal()) }}
         backdrop="static"
         keyboard={false}
+        size={modal.size}
       >
         <Modal.Header closeButton>
           <Modal.Title>{modal.title}</Modal.Title>

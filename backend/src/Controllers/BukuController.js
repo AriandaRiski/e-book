@@ -37,10 +37,27 @@ const TambahBuku = async (req, res) => {
         penerbit: req.body.penerbit
     }
 
+    const cekValid = {
+        judul: req.body.judul,
+        tahun: req.body.tahun,
+        pengarang: req.body.pengarang
+    }
+
     try {
+
+        const cekBuku = await BukuModel.cekCustom(cekValid);
+
+        if (cekBuku) {
+            return res.status(400).json({
+                success: false,
+                message: `data buku dengan judul, pengarang dan tahun sudah tersedia!`
+            })
+        }
 
         const insert = await BukuModel.tambah(data);
         const getData = await BukuModel.cekId(insert[0]);
+
+        console.log(getData)
 
         res.status(201).json({
             success: true,
@@ -66,17 +83,27 @@ const UpdateBuku = async (req, res) => {
         penerbit: req.body.penerbit
     }
 
+    const cekValid = {
+        judul: req.body.judul,
+        tahun: req.body.tahun,
+        pengarang: req.body.pengarang
+    }
+
+
     try {
 
-        // const cek = await BukuModel.cekId(data.id);
-        // if (!cek) {
-        //     return res.json({ message: `data dengan id = ${data.id} tidak ditemukan!` });
-        // }
+        const cek = await BukuModel.cekId(data.id);
+        if (!cek) {
+            return res.json({ message: `data dengan id = ${data.id} tidak ditemukan!` });
+        }
 
-        // const cekBuku = await BukuModel.cekBuku(data, data.id)
-        // if (cekBuku) {
-        //     return res.json({ success: false, message: `Buku dengan Judul " ${data.judul} "karangan " ${data.pengarang} " Sudah Tersedia` });
-        // }
+        const cekBukuTersedia = await BukuModel.cekBukuTersedia(cekValid, data.id );
+        if (cekBukuTersedia) {
+            return res.status(400).json({
+                success: false,
+                message: `data buku dengan judul, pengarang dan tahun sudah tersedia!`
+            })
+        }
 
         const update = await BukuModel.update(data.id, data)
         const getData = await BukuModel.cekId(data.id)
@@ -108,7 +135,7 @@ const HapusBuku = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            message: "Kategori berhasil dihapus!"
+            message: "Buku berhasil dihapus!"
         })
 
     } catch (error) {

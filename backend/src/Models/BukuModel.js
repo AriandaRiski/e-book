@@ -7,7 +7,10 @@ const getBuku = (filter) => {
         const offset = (parseInt(page) * parseInt(limit)) - parseInt(limit);
         const limit_page = parseInt(limit);
 
-        const getBuku = db.select('*').from('tbl_buku').limit(limit_page).offset(offset);
+        const getBuku = db.select('b.*','k.kategori').from('tbl_buku as b')
+            .join('kategori as k', 'k.id_kategori', 'b.id_kategori')
+            .orderBy('b.id', 'desc')
+            .limit(limit_page).offset(offset);
         return getBuku;
     } catch (error) {
         console.log(error)
@@ -15,7 +18,8 @@ const getBuku = (filter) => {
 }
 
 const total = () => {
-    const total = db('tbl_buku').count('* as total');
+    // const total = db('tbl_buku').count('* as total');
+    const total = db.select('*').from('tbl_buku as b').join('kategori as k', 'k.id_kategori' , 'b.id_kategori').count('* as total');
     return total;
 }
 
@@ -49,16 +53,31 @@ const hapus = (id) => {
 const cekBuku = (data, id) => {
     // const cek = db.select('*').from('tbl_buku').where('judul', data.judul).where('id', '!=', id).first();
     const cek = db.select('*').from('tbl_buku').where({
-        'judul' : data.judul,
-        'pengarang' : data.pengarang
-    }).where('id' ,'!=', id).first();
+        'judul': data.judul,
+        'pengarang': data.pengarang
+    }).where('id', '!=', id).first();
 
     return cek;
 }
 
 const cekId = (id) => {
     const cek = db.select('*').from('tbl_buku').where('id', id).first();
+    // const cek = db.select('*').from('tbl_buku as b').join('kategori as k', 'k.id_kategori', 'b.id_kategori').where('id', id).first();
+
     return cek;
+}
+
+const cekCustom = (data) =>{
+    const cekCustom = db.select('*').from('tbl_buku').where(data).first();
+    return cekCustom
+}
+
+const cekBukuTersedia = (data, id) => {
+    const cekBukuTersedia = db.select('*').from('tbl_buku').where(data).where('id', '!=', id).first();
+    // sama dengan
+    // const cekBukuTersedia = db.select('*').from('tbl_buku').where(data).whereNotIn('id', [id]).first();
+    
+    return cekBukuTersedia
 }
 
 module.exports = {
@@ -68,5 +87,7 @@ module.exports = {
     update,
     hapus,
     cekBuku,
-    cekId
+    cekId,
+    cekCustom,
+    cekBukuTersedia
 }
