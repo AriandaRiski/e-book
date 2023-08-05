@@ -117,6 +117,7 @@ const kategoriSlice = createSlice({
                 state.isLoading = false;
                 state.data = state.data.filter((data_kategori) => data_kategori.id_kategori !== action.meta.arg.id);
                 state.isDelete = !state.isDelete;
+                state.total = state.total - 1;
             })
             .addCase(deleteKategori.rejected, (state, action) => {
                 state.isLoading = false
@@ -129,7 +130,8 @@ const kategoriSlice = createSlice({
             })
             .addCase(addKategori.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.data = action.payload.data ? [...state.data, action.payload.data] : state.data;
+                state.data = action.payload.data ? [...state.data, action.payload.data].slice(1).sort((a, b) => b.id_kategori - a.id_kategori) : state.data;
+                state.total = state.total + 1;
             })
             .addCase(addKategori.rejected, (state, action) => {
                 state.isLoading = false

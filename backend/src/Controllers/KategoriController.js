@@ -29,7 +29,7 @@ const TambahKategori = async (req, res) => {
     const kategori = req.body.kategori;
 
     try {
-        const cek = await KategoriModel.cekKategori(kategori);
+        const cek = await KategoriModel.cekKategoriName(kategori);
         if (cek) {
             return res.json({
                 success: false,

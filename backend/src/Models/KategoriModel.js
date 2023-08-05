@@ -8,7 +8,7 @@ const getKategori = (filter) => {
 
         const limit_page = parseInt(limit);
 
-        const getKategori = db.select('*').from('kategori').limit(limit_page).offset(offset);
+        const getKategori = db.select('*').from('kategori').orderBy('id_kategori', 'desc').limit(limit_page).offset(offset);
         return getKategori;
     } catch (error) {
         console.log(error)
@@ -40,9 +40,14 @@ const update = (id_kategori, kategori) => {
     return update;
 }
 
-const hapus = (id) => {
-    const hapus = db('tbl_buku').where({ id: id }).del();
+const hapus = (id_kategori) => {
+    const hapus = db('kategori').where({ id_kategori: id_kategori }).del();
     return hapus;
+}
+
+const cekKategoriName = (kategori) => {
+    const cek = db.select('*').from('kategori').where({ kategori: kategori }).first();
+    return cek;
 }
 
 module.exports = {
@@ -52,5 +57,6 @@ module.exports = {
     cekId,
     update,
     hapus,
-    total
+    total,
+    cekKategoriName
 }

@@ -107,7 +107,7 @@ const dataTable = () => {
     return (
         <div>
             <DataTable
-                title="pisah datatable"
+                // title="pisah datatable"
                 columns={columns}
                 data={kategori.data}
                 actions={action}
