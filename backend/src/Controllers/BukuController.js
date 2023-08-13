@@ -54,15 +54,13 @@ const TambahBuku = async (req, res) => {
             })
         }
 
-        const insert = await BukuModel.tambah(data);
-        const getData = await BukuModel.cekId(insert[0]);
-
-        console.log(getData)
+        const insert = await BukuModel.tambah(data, req.cover);
+        // const getData = await BukuModel.cekId(insert[0]);
 
         res.status(201).json({
             success: true,
             message: `Berhasil Insert Buku`,
-            data: getData
+            data: insert
         });
 
     } catch (error) {

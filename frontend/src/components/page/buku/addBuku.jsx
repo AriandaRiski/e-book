@@ -24,6 +24,19 @@ const addForm = (row) => {
 
     const handleSubmit = async (values) => {
 
+        const value = {
+            id_kategori: values.id_kategori,
+            judul: values.judul,
+            pengarang: values.pengarang,
+            penerbit: values.penerbit,
+            tahun: values.tahun,
+            kota: values.kota,
+            cover: {
+                name: values.cover.name,
+                size: values.cover.size
+            }
+        }
+
         try {
 
             if (row.action) {
@@ -92,6 +105,7 @@ const addForm = (row) => {
             penerbit: row.data ? row.data.penerbit : '',
             tahun: row.data ? row.data.tahun : '',
             kota: row.data ? row.data.kota : '',
+            cover: ''
         },
 
         validationSchema: Yup.object({
@@ -101,11 +115,12 @@ const addForm = (row) => {
             penerbit: Yup.string().required(),
             kota: Yup.string().required(),
             tahun: Yup.string().required(),
+            // cover: Yup.mixed().required()
         }),
 
         onSubmit: handleSubmit
     })
-    
+
     return (
         <>
             <Form onSubmit={formik.handleSubmit}>
@@ -145,6 +160,12 @@ const addForm = (row) => {
                 <FloatingLabel controlId="floatingPassword" label="Kota" className="mb-3">
                     <Form.Control type="text" placeholder="Kota" name="kota" {...formik.getFieldProps('kota')} />
                     {formik.errors.kota && <div className='error'>{formik.errors.kota}</div>}
+                </FloatingLabel>
+
+                <FloatingLabel controlId="floatingPassword" label="Cover" className="mb-3">
+                    <Form.Control type="file" name="cover"
+                        onChange={(e) => formik.setFieldValue('cover', e.target.files[0])}
+                    />
                 </FloatingLabel>
 
                 <div className="modal-footer">
