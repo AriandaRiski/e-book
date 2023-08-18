@@ -61,7 +61,7 @@ const dataTable = () => {
         },
         {
             name: 'cover',
-            selector: row => row.cover ?? <Image src="/cover.jpg" width={50} height={50} alt="cover buku" />,
+            selector: row => <Image src={row.cover} width={50} height={50} alt="cover buku" />,
             sortable: true,
         },
         {

@@ -8,13 +8,14 @@ import { addBuku, editBuku } from '@/redux/action/buku'
 import { getKategori } from '@/redux/action/kategori'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
-import { Typeahead } from 'react-bootstrap-typeahead'
+// import { Typeahead } from 'react-bootstrap-typeahead'
+import Image from 'next/image'
 
 const addForm = (row) => {
     const dispatch = useDispatch();
     const { data: session } = useSession();
     const { kategori } = useSelector((state) => state);
-    const [singleSelections, setSingleSelections] = useState([]);
+    const [base64, setBase64] = useState(false);
 
     useEffect(() => {
         if (session) {
@@ -23,19 +24,7 @@ const addForm = (row) => {
     }, [session, dispatch]);
 
     const handleSubmit = async (values) => {
-
-        const value = {
-            id_kategori: values.id_kategori,
-            judul: values.judul,
-            pengarang: values.pengarang,
-            penerbit: values.penerbit,
-            tahun: values.tahun,
-            kota: values.kota,
-            cover: {
-                name: values.cover.name,
-                size: values.cover.size
-            }
-        }
+        values = { ...values, cover: base64}
 
         try {
 
@@ -105,7 +94,7 @@ const addForm = (row) => {
             penerbit: row.data ? row.data.penerbit : '',
             tahun: row.data ? row.data.tahun : '',
             kota: row.data ? row.data.kota : '',
-            cover: ''
+            // cover : null
         },
 
         validationSchema: Yup.object({
@@ -120,6 +109,19 @@ const addForm = (row) => {
 
         onSubmit: handleSubmit
     })
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const convert = e.target.result;
+                setBase64(convert);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     return (
         <>
@@ -163,9 +165,11 @@ const addForm = (row) => {
                 </FloatingLabel>
 
                 <FloatingLabel controlId="floatingPassword" label="Cover" className="mb-3">
-                    <Form.Control type="file" name="cover"
-                        onChange={(e) => formik.setFieldValue('cover', e.target.files[0])}
+                    <Form.Control type="file" name="cover" {...formik.getFieldProps('cover')}
+                        onChange={handleFileChange} 
                     />
+                    {formik.touched.cover && formik.errors.cover && <div className='error'>{formik.errors.cover}</div>}
+                    <Image src={base64 == false ? "/cover.jpg" : base64} width={50} height={50} alt="cover buku" />
                 </FloatingLabel>
 
                 <div className="modal-footer">

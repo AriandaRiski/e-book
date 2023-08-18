@@ -41,8 +41,6 @@ export const deleteBuku = createAsyncThunk('buku/deleteBuku', async ({ token, id
 export const addBuku = createAsyncThunk('buku/addBuku', async ({ token, values }) => {
     try {
 
-        console.log(values)
-
         const requestOptions = {
             method: 'POST',
             headers: {
@@ -121,7 +119,7 @@ const bukuSlice = createSlice({
             .addCase(addBuku.fulfilled, (state, action) => {
                 state.isLoading = false;
                 // state.data = action.payload.data ? [...state.data, action.payload.data] : state.data;
-                state.data = action.payload.data ? [...state.data, action.payload.data].slice(1).sort((a,b) => b.id - a.id) : state.data;
+                state.data = action.payload.data ? [...state.data, action.payload.data].slice(0).sort((a,b) => b.id - a.id) : state.data;
                 state.total = state.total + 1;
             })
             .addCase(addBuku.rejected, (state, action) => {
