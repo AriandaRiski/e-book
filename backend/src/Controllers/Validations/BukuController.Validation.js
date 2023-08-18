@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const BukuModel = require('../../Models/BukuModel');
 
 const addValidation = async (req, res, next) => {
     const schema = Joi.object({
@@ -19,6 +20,21 @@ const addValidation = async (req, res, next) => {
             tahun: req.body.tahun,
             penerbit: req.body.penerbit,
             kota: req.body.kota
+        }
+
+        const cekValid = {
+            judul: req.body.judul,
+            tahun: req.body.tahun,
+            pengarang: req.body.pengarang
+        }
+
+        const cekBuku = await BukuModel.cekCustom(cekValid);
+
+        if (cekBuku) {
+            return res.status(400).json({
+                success: false,
+                message: `data buku dengan judul, pengarang dan tahun sudah tersedia!`
+            })
         }
 
         const { error } = await schema.validate(data);

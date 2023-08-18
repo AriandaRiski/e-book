@@ -37,25 +37,9 @@ const TambahBuku = async (req, res) => {
         penerbit: req.body.penerbit
     }
 
-    const cekValid = {
-        judul: req.body.judul,
-        tahun: req.body.tahun,
-        pengarang: req.body.pengarang
-    }
-
     try {
 
-        const cekBuku = await BukuModel.cekCustom(cekValid);
-
-        if (cekBuku) {
-            return res.status(400).json({
-                success: false,
-                message: `data buku dengan judul, pengarang dan tahun sudah tersedia!`
-            })
-        }
-
         const insert = await BukuModel.tambah(data, req.cover);
-        // const getData = await BukuModel.cekId(insert[0]);
 
         res.status(201).json({
             success: true,
@@ -95,7 +79,7 @@ const UpdateBuku = async (req, res) => {
             return res.json({ message: `data dengan id = ${data.id} tidak ditemukan!` });
         }
 
-        const cekBukuTersedia = await BukuModel.cekBukuTersedia(cekValid, data.id );
+        const cekBukuTersedia = await BukuModel.cekBukuTersedia(cekValid, data.id);
         if (cekBukuTersedia) {
             return res.status(400).json({
                 success: false,

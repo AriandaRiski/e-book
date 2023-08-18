@@ -130,7 +130,7 @@ const kategoriSlice = createSlice({
             })
             .addCase(addKategori.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.data = action.payload.data ? [...state.data, action.payload.data].slice(1).sort((a, b) => b.id_kategori - a.id_kategori) : state.data;
+                state.data = action.payload.data ? [...state.data, action.payload.data].slice(0).sort((a, b) => b.id_kategori - a.id_kategori) : state.data;
                 state.total = state.total + 1;
             })
             .addCase(addKategori.rejected, (state, action) => {
