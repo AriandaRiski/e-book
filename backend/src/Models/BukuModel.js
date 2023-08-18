@@ -45,7 +45,7 @@ const tambah = async (data, file_cover) => {
     try {
 
         const buku = await trans('tbl_buku').insert(data);
-        if (file_cover) {
+        // if (file_cover) {
             const cover = {
                 fileId: file_cover.fileId,
                 name: file_cover.name,
@@ -60,7 +60,7 @@ const tambah = async (data, file_cover) => {
                 jenis: 1
             }
             const file = await trans('files').insert(cover);
-        }
+        // }
         const kategori = await trans('kategori').select('kategori').where('id_kategori', data.id_kategori).first();
         await trans.commit();
 
@@ -120,6 +120,11 @@ const cekBukuTersedia = (data, id) => {
     return cekBukuTersedia
 }
 
+const cek_cover = (id_parent) => {
+    const cek_cover = db.select('fileId').from('files').whereRaw(`id_parent = ? and jenis = 1`, [id_parent]).first();
+    return cek_cover;
+}
+
 module.exports = {
     getBuku,
     total,
@@ -129,5 +134,6 @@ module.exports = {
     cekBuku,
     cekId,
     cekCustom,
-    cekBukuTersedia
+    cekBukuTersedia,
+    cek_cover
 }
