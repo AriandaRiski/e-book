@@ -1,5 +1,5 @@
 const BukuModel = require('../Models/BukuModel');
-const ImageKit = require("imagekit");
+const imagekit = require('../Config/imagekitConfig');
 
 const ListBuku = async (req, res) => {
 
@@ -115,13 +115,6 @@ const HapusBuku = async (req, res) => {
         }
 
         const hapus = await BukuModel.hapus(id);
-
-        const imagekit = new ImageKit({
-            publicKey: process.env.publicKey,
-            privateKey: process.env.privateKey,
-            urlEndpoint: process.env.urlEndpoint
-        });
-
         await imagekit.deleteFile(req.file);
 
         return res.status(201).json({
