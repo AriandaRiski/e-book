@@ -1,8 +1,6 @@
-const mime = require('mime');
-const fs = require('fs');
 const { fromBuffer } = require('file-type');
 const { v4: uuidv4 } = require('uuid');
-const ImageKit = require("imagekit");
+const imagekit = require('./../../Config/imagekitConfig');
 
 const FilesBase = async (req, res, next) => {
 
@@ -40,12 +38,6 @@ const FilesBase = async (req, res, next) => {
                 message: 'max file size 10MB',
             });
         }
-
-        const imagekit = new ImageKit({
-            publicKey: process.env.publicKey,
-            privateKey: process.env.privateKey,
-            urlEndpoint: process.env.urlEndpoint
-        });
 
         const upload = await imagekit.upload({
             file: imgBuffer, //required

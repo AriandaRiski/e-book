@@ -8,32 +8,23 @@ const getBuku = (filter) => {
         const limit_page = parseInt(limit);
 
         const getBuku =
-            // db.select('b.*', 'k.kategori', 'f.thumbnailUrl as cover').from('tbl_buku as b')
-            //     .leftJoin('kategori as k', 'k.id_kategori', 'b.id_kategori')
-            //     .join('files as f', function () {
-            //         this.on('f.id_parent', '=', 'b.id')
-            //         this.on(db.raw(`f.jenis = ?`, [1]))
-            //     })
-            //     .orderBy('b.id', 'desc')
-            //     .limit(limit_page).offset(offset);
-
-
-            db.select('b.*', 'k.kategori', 'f.thumbnailUrl as cover')
-                .from('tbl_buku as b')
-                .leftJoin('kategori as k', 'k.id_kategori', '=', 'b.id_kategori')
+            db.select('b.*', 'k.kategori', 'f.thumbnailUrl as cover').from('tbl_buku as b')
+                .leftJoin('kategori as k', 'k.id_kategori', 'b.id_kategori')
                 .join('files as f', function () {
-                    this.on('f.id_parent', '=', 'b.id').andOn('f.jenis', '=', 1);
+                    this.on('f.id_parent', '=', 'b.id')
+                    this.on(db.raw(`f.jenis = ?`, [1]))
                 })
                 .orderBy('b.id', 'desc')
                 .limit(limit_page).offset(offset);
+
         return getBuku;
+
     } catch (error) {
         console.log(error)
     }
 }
 
 const total = () => {
-    // const total = db('tbl_buku').count('* as total');
     const total = db.select('*').from('tbl_buku as b').join('kategori as k', 'k.id_kategori', 'b.id_kategori').count('* as total');
     return total;
 }
@@ -46,26 +37,26 @@ const tambah = async (data, file_cover) => {
 
         const buku = await trans('tbl_buku').insert(data);
         // if (file_cover) {
-            const cover = {
-                fileId: file_cover.fileId,
-                name: file_cover.name,
-                size: file_cover.size,
-                filePath: file_cover.filePath,
-                url: file_cover.url,
-                fileType: file_cover.fileType,
-                height: file_cover.height,
-                width: file_cover.width,
-                thumbnailUrl: file_cover.thumbnailUrl,
-                id_parent: buku[0],
-                jenis: 1
-            }
-            const file = await trans('files').insert(cover);
+        const cover = {
+            fileId: file_cover.fileId,
+            name: file_cover.name,
+            size: file_cover.size,
+            filePath: file_cover.filePath,
+            url: file_cover.url,
+            fileType: file_cover.fileType,
+            height: file_cover.height,
+            width: file_cover.width,
+            thumbnailUrl: file_cover.thumbnailUrl,
+            id_parent: buku[0],
+            jenis: 1
+        }
+        const file = await trans('files').insert(cover);
         // }
         const kategori = await trans('kategori').select('kategori').where('id_kategori', data.id_kategori).first();
         await trans.commit();
 
         return {
-            ...data, id: buku[0], thumbnailUrl: cover.thumbnailUrl, kategori: kategori.kategori
+            ...data, id: buku[0], cover: cover.thumbnailUrl, kategori: kategori.kategori
         };
 
     } catch (error) {
@@ -91,7 +82,7 @@ const hapus = (id) => {
 }
 
 const cekBuku = (data, id) => {
-    // const cek = db.select('*').from('tbl_buku').where('judul', data.judul).where('id', '!=', id).first();
+
     const cek = db.select('*').from('tbl_buku').where({
         'judul': data.judul,
         'pengarang': data.pengarang
@@ -102,8 +93,6 @@ const cekBuku = (data, id) => {
 
 const cekId = (id) => {
     const cek = db.select('*').from('tbl_buku').where('id', id).first();
-    // const cek = db.select('*').from('tbl_buku as b').join('kategori as k', 'k.id_kategori', 'b.id_kategori').where('id', id).first();
-
     return cek;
 }
 
