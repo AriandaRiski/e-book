@@ -56,6 +56,7 @@ const TambahBuku = async (req, res) => {
 
 const UpdateBuku = async (req, res) => {
 
+    const is_cover = req.cover ?? '';
     const data = {
         id: req.params.id,
         id_kategori: req.body.id_kategori,
@@ -63,7 +64,8 @@ const UpdateBuku = async (req, res) => {
         pengarang: req.body.pengarang,
         kota: req.body.kota,
         tahun: req.body.tahun,
-        penerbit: req.body.penerbit
+        penerbit: req.body.penerbit,
+        cover : is_cover
     }
 
     const cekValid = {
@@ -71,7 +73,6 @@ const UpdateBuku = async (req, res) => {
         tahun: req.body.tahun,
         pengarang: req.body.pengarang
     }
-
 
     try {
 
@@ -90,6 +91,10 @@ const UpdateBuku = async (req, res) => {
 
         const update = await BukuModel.update(data.id, data)
         const getData = await BukuModel.cekId(data.id)
+
+        if(data.cover){
+            await imagekit.deleteFile(req.file);
+        }
 
         return res.status(201).json({
             success: true,

@@ -110,7 +110,6 @@ const bukuSlice = createSlice({
                 state.isLoading = false;
                 state.data = state.data.filter((buku) => buku.id !== action.meta.arg.id);
                 state.total = state.total - 1;
-                console.log(action.meta)
             })
             // add
             .addCase(addBuku.pending, (state, action) => {

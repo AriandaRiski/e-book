@@ -6,9 +6,7 @@ const UploadValidation = require('./../Controllers/Validations/UploadFile.Valida
 Router.get('/list', BukuController.ListBuku)
 Router.get('/total', BukuController.TotalBuku )
 Router.post('/tambah', BukuValidation.addValidation, UploadValidation.FilesBase, BukuController.TambahBuku )
-Router.put('/edit/:id', BukuController.UpdateBuku)
+Router.put('/edit/:id', BukuValidation.editValidation, UploadValidation.FilesBase, BukuController.UpdateBuku)
 Router.delete('/hapus/:id', BukuValidation.deleteValidation, BukuController.HapusBuku)
-
-// Router.post('/upload', UploadValidation.FilesBase )
 
 module.exports = Router;

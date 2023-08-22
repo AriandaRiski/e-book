@@ -36,7 +36,7 @@ const tambah = async (data, file_cover) => {
     try {
 
         const buku = await trans('tbl_buku').insert(data);
-        // if (file_cover) {
+
         const cover = {
             fileId: file_cover.fileId,
             name: file_cover.name,
@@ -50,8 +50,8 @@ const tambah = async (data, file_cover) => {
             id_parent: buku[0],
             jenis: 1
         }
+
         const file = await trans('files').insert(cover);
-        // }
         const kategori = await trans('kategori').select('kategori').where('id_kategori', data.id_kategori).first();
         await trans.commit();
 
@@ -67,9 +67,31 @@ const tambah = async (data, file_cover) => {
 
 }
 
-const update = (id, data) => {
+const update = async(id, data) => {
+
+    const file = {
+        fileId: data.cover.fileId,
+        name: data.cover.name,
+        size: data.cover.size,
+        filePath: data.cover.filePath,
+        url: data.cover.url,
+        fileType: data.cover.fileType,
+        height: data.cover.height,
+        width: data.cover.width,
+        thumbnailUrl: data.cover.thumbnailUrl,
+        id_parent: id,
+        jenis: 1
+    }
+
+    const {cover, ...data_edit} = data;
+
     try {
-        const update = db('tbl_buku').where({ id: id }).update(data)
+        const update = db('tbl_buku').where({ id: id }).update(data_edit);
+        // const update_file = await db('files').where(`id_parent = ? and jenis = 1`, [id]).update(data.cover);
+
+        if(data.cover){
+            const update_file = await db('files').where('id_parent', id).where('jenis', 1).update(file);
+        }
         return update;
     } catch (error) {
         console.log(error)

@@ -78,6 +78,9 @@ const editValidation = async (req, res, next) => {
             return res.json({ message: error.details[0].message })
         }
 
+        const file_id = await BukuModel.cek_cover(req.params.id);
+        req.file = file_id.fileId
+
         next();
 
     } catch (error) {
