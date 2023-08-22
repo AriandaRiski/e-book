@@ -24,7 +24,7 @@ const addForm = (row) => {
     }, [session, dispatch]);
 
     const handleSubmit = async (values) => {
-        values = { ...values, cover: base64}
+        values = { ...values, cover: base64 }
 
         try {
 
@@ -38,6 +38,7 @@ const addForm = (row) => {
                     penerbit: values.penerbit,
                     tahun: values.tahun,
                     kota: values.kota,
+                    cover: values.cover
                 }
 
                 const edit = await dispatch(editBuku({ token: session.tokenAccess, values: value }));
@@ -94,7 +95,7 @@ const addForm = (row) => {
             penerbit: row.data ? row.data.penerbit : '',
             tahun: row.data ? row.data.tahun : '',
             kota: row.data ? row.data.kota : '',
-            // cover : null
+            // cover : row.data ? row.data.cover : ''
         },
 
         validationSchema: Yup.object({
@@ -137,15 +138,6 @@ const addForm = (row) => {
                             <option value={val.id_kategori} key={index + 1}>{val.kategori}</option>
                         )}
                     </Form.Select>
-
-                    {/* <Typeahead
-                        id="basic-typeahead-single"
-                        labelKey="kategori"
-                        onChange={setSingleSelections}
-                        options={kategori.data}
-                        placeholder="Choose a state..."
-                        selected={singleSelections}
-                    /> */}
                 </FloatingLabel>
                 <FloatingLabel controlId="floatingPassword" label="Pengarang" className="mb-3" >
                     <Form.Control type="text" placeholder="Pengarang" name="pengarang" {...formik.getFieldProps('pengarang')} />
@@ -163,13 +155,15 @@ const addForm = (row) => {
                     <Form.Control type="text" placeholder="Kota" name="kota" {...formik.getFieldProps('kota')} />
                     {formik.errors.kota && <div className='error'>{formik.errors.kota}</div>}
                 </FloatingLabel>
-
                 <FloatingLabel controlId="floatingPassword" label="Cover" className="mb-3">
-                    <Form.Control type="file" name="cover" {...formik.getFieldProps('cover')}
-                        onChange={handleFileChange} 
-                    />
+                    <Form.Control type="file" name="cover" {...formik.getFieldProps('cover')} onChange={handleFileChange} />
                     {formik.touched.cover && formik.errors.cover && <div className='error'>{formik.errors.cover}</div>}
-                    <Image src={base64 == false ? "/cover.jpg" : base64} width={50} height={50} alt="cover buku" />
+
+                    {
+                        (row.action == 'edit') ?
+                            <Image src={row.data.cover ? row.data.cover : base64} width={150} height={150} alt="cover buku" /> : <Image src={base64 == false ? '/cover.jpg' : base64} width={150} height={150} alt="cover buku" />
+                    }
+
                 </FloatingLabel>
 
                 <div className="modal-footer">
