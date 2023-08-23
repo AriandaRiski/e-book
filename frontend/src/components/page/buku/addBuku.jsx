@@ -16,6 +16,7 @@ const addForm = (row) => {
     const { data: session } = useSession();
     const { kategori } = useSelector((state) => state);
     const [base64, setBase64] = useState(false);
+    const [Lastcover, setLastcover] = useState(row.data?.cover);
 
     useEffect(() => {
         if (session) {
@@ -95,7 +96,7 @@ const addForm = (row) => {
             penerbit: row.data ? row.data.penerbit : '',
             tahun: row.data ? row.data.tahun : '',
             kota: row.data ? row.data.kota : '',
-            // cover : row.data ? row.data.cover : ''
+            // cover : null
         },
 
         validationSchema: Yup.object({
@@ -122,7 +123,7 @@ const addForm = (row) => {
             };
             reader.readAsDataURL(file);
         }
-    };
+    }
 
     return (
         <>
@@ -138,6 +139,7 @@ const addForm = (row) => {
                             <option value={val.id_kategori} key={index + 1}>{val.kategori}</option>
                         )}
                     </Form.Select>
+                    {formik.errors.id_kategori && <div className='error'>{formik.errors.id_kategori}</div>}
                 </FloatingLabel>
                 <FloatingLabel controlId="floatingPassword" label="Pengarang" className="mb-3" >
                     <Form.Control type="text" placeholder="Pengarang" name="pengarang" {...formik.getFieldProps('pengarang')} />
@@ -157,13 +159,14 @@ const addForm = (row) => {
                 </FloatingLabel>
                 <FloatingLabel controlId="floatingPassword" label="Cover" className="mb-3">
                     <Form.Control type="file" name="cover" {...formik.getFieldProps('cover')} onChange={handleFileChange} />
-                    {formik.touched.cover && formik.errors.cover && <div className='error'>{formik.errors.cover}</div>}
-
+                    {formik.errors.cover && <div className='error'>{formik.errors.cover}</div>}
                     {
-                        (row.action == 'edit') ?
-                            <Image src={row.data.cover ? row.data.cover : base64} width={150} height={150} alt="cover buku" /> : <Image src={base64 == false ? '/cover.jpg' : base64} width={150} height={150} alt="cover buku" />
+                        (base64 || Lastcover) && (
+                            <div className="d-flex mt-3">
+                                <img src={base64 ? base64 : Lastcover} className="avatars-preview mx-auto d-flex justify-content-center" width={150} height={150} alt="Selected" />
+                            </div>
+                        )
                     }
-
                 </FloatingLabel>
 
                 <div className="modal-footer">
