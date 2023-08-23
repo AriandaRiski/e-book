@@ -25,7 +25,12 @@ const getBuku = (filter) => {
 }
 
 const total = () => {
-    const total = db.select('*').from('tbl_buku as b').join('kategori as k', 'k.id_kategori', 'b.id_kategori').count('* as total');
+    const total = db.select('*').from('tbl_buku as b')
+        .leftJoin('kategori as k', 'k.id_kategori', 'b.id_kategori')
+        .join('files as f', function () {
+            this.on('f.id_parent', '=', 'b.id')
+            this.on(db.raw(`f.jenis = ?`, [1]))
+        }).count('* as total');
     return total;
 }
 
@@ -67,7 +72,7 @@ const tambah = async (data, file_cover) => {
 
 }
 
-const update = async(id, data) => {
+const update = async (id, data) => {
 
     const file = {
         fileId: data.cover.fileId,
@@ -83,13 +88,13 @@ const update = async(id, data) => {
         jenis: 1
     }
 
-    const {cover, ...data_edit} = data;
+    const { cover, ...data_edit } = data;
 
     try {
         const update = db('tbl_buku').where({ id: id }).update(data_edit);
         // const update_file = await db('files').where(`id_parent = ? and jenis = 1`, [id]).update(data.cover);
 
-        if(data.cover){
+        if (data.cover) {
             const update_file = await db('files').where('id_parent', id).where('jenis', 1).update(file);
         }
         return update;
